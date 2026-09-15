@@ -58,6 +58,19 @@ const cambiarEstado = (req, res) => {
 
 };
 
+const eliminarIncidencia = (req, res) => {
+    const id = parseInt(req.params.id);
+    const index = incidenciasD.findIndex(i => i.id === id);
+
+    if (index === -1) {
+        return res.status(404).json({ error: 'Incidencia no encontrada' });
+    }
+
+    incidenciasD.splice(index, 1);
+    return res.status(200).json({ mensaje: 'Incidencia eliminada correctamente' });
+};
+
+
 const obtenerIncidencias = (req, res) => {
     // Lógica para obtener todos los paquetes
 };
@@ -69,5 +82,7 @@ const filtrarIncidencias = (req, res) => {
 module.exports = {
     crearIncidencias,
     obtenerIncidencias,
-    filtrarIncidencias
+    filtrarIncidencias,
+    cambiarEstado,
+    eliminarIncidencia
 };
