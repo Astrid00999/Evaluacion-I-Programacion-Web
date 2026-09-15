@@ -1,44 +1,63 @@
 const incidenciasD = require('../data/incidenciasData.js');
 
+let contadorId = 1;
+
 const crearIncidencias = (req, res) => {
-    // Lógica para crear una nueva incidencia
-
     const { empleado, area, descripcion, prioridad } = req.body;
-    //Regla de negocio
-    const estado = "Pendiente";
+    const esTextoValido = (valor) => typeof valor === 'string' && valor.trim() !== '';
 
-    if (!empleado || !area || !descripcion || !prioridad ||
-        empleado.trim() === "" || area.trim() === "" ||
-        descripcion.trim() === "" || prioridad.trim() === "") {
+    if (!esTextoValido(empleado) || !esTextoValido(area) || !esTextoValido(descripcion) || !esTextoValido(prioridad)) {
         return res.status(400).json({ error: 'Todos los campos son obligatorios y no pueden estar vacíos' });
     }
 
-    switch (prioridad) {
-        case 'Alta':
-            break;
-        case 'Media':
-            break;
-        case 'Baja':
-            break;
-        default:
-            return res.status(400).json({ error: 'La prioridad debe ser alta, media o baja' });
+    let prioridadValidada = '';
+    switch (prioridad.trim().toLowerCase()) {
+        case 'alta': prioridadValidada = 'Alta'; break;
+        case 'media': prioridadValidada = 'Media'; break;
+        case 'baja': prioridadValidada = 'Baja'; break;
+        default: return res.status(400).json({ error: 'La prioridad debe ser Alta, Media o Baja' });
     }
 
     const nuevaIncidencia = {
-        id: incidenciasD.length > 0 ? Math.max(...incidenciasD.map(i => i.id)) + 1 : 1,
-        empleado, area, descripcion, prioridad, estado
+        id: contadorId,
+        empleado: empleado.trim(),
+        area: area.trim(),
+        descripcion: descripcion.trim(),
+        prioridad: prioridadValidada,
+        estado: 'Pendiente'
     };
 
     incidenciasD.push(nuevaIncidencia);
-    res.status(201).json({ message: 'Incidencia creada exitosamente', incidencia: nuevaIncidencia });
+    contadorId++;
 
+    res.status(201).json({ mensaje: 'Incidencia registrada correctamente' });
+};
+
+const obtenerIncidencias = (req, res) => {
+    // Lógica para obtener todos los paquetes
+};
+
+const filtrarIncidencias = (req, res) => {
+    // Lógica para filtrar paquetes
+};
+
+const buscarIncidenciasId = (req, res) => {
+    const id = parseInt(req.params.id);
+    const incidencia = incidenciasD.find(incidencia => incidencia.id === id);
+
+    if (!incidencia) {
+        return res.status(404).json({ error: 'Incidencia no encontrada' });
+    }
+
+    res.json(incidencia);
 };
 
 const cambiarEstado = (req, res) => {
-    id = parseInt(req.params.id);
+    const id = parseInt(req.params.id);
     const { estado } = req.body;
 
     const incidencia = incidenciasD.find(i => i.id === id);
+
     if (!incidencia) {
         return res.status(404).json({ error: 'Incidencia no encontrada' });
     }
@@ -49,13 +68,10 @@ const cambiarEstado = (req, res) => {
         case 'Resuelta':
         case 'Cancelada':
             incidencia.estado = estado;
-            res.status(200).json({ message: 'Estado de la incidencia actualizado', incidencia });
-            break;
+            return res.status(200).json({ mensaje: 'Estado actualizado correctamente', incidencia });
         default:
-            return res.status(400).json({ error: 'Estado inválido. Debe ser Pendiente, En Proceso, Resuelta o Cancelada' });
-
+            return res.status(400).json({ error: 'El estado debe ser Pendiente, En Proceso, Resuelta o Cancelada' });
     }
-
 };
 
 const eliminarIncidencia = (req, res) => {
@@ -70,19 +86,48 @@ const eliminarIncidencia = (req, res) => {
     return res.status(200).json({ mensaje: 'Incidencia eliminada correctamente' });
 };
 
-
-const obtenerIncidencias = (req, res) => {
-    // Lógica para obtener todos los paquetes
+const contarPorEstado = (lista, estado) => {
+    return lista.filter(incidencia => incidencia.estado.trim().toLowerCase() === estado).length;
 };
 
-const filtrarIncidencias = (req, res) => {
-    // Lógica para filtrar paquetes
+const obtenerEstadisticas = (req, res) => {
+    const estadisticas = {
+        totalIncidencias: incidenciasD.length,
+        pendientes: contarPorEstado(incidenciasD, 'pendiente'),
+        enProceso: contarPorEstado(incidenciasD, 'en proceso'),
+        resueltas: contarPorEstado(incidenciasD, 'resuelta'),
+        canceladas: contarPorEstado(incidenciasD, 'cancelada')
+    };
+
+    res.json(estadisticas);
+};
+
+const clasificarIncidencia = (req, res) => {
+    const id = parseInt(req.params.id);
+    const incidencia = incidenciasD.find(incidencia => incidencia.id === id);
+
+    if (!incidencia) {
+        return res.status(404).json({ mensaje: 'Incidencia no encontrada' });
+    }
+
+    let clasificacion = '';
+    switch (incidencia.prioridad.trim().toLowerCase()) {
+        case 'alta': clasificacion = 'Crítica'; break;
+        case 'media': clasificacion = 'Importante'; break;
+        case 'baja': clasificacion = 'Normal'; break;
+        default: clasificacion = 'Sin clasificar'; break;
+    }
+
+    res.json({ id: incidencia.id, clasificacion });
 };
 
 module.exports = {
     crearIncidencias,
     obtenerIncidencias,
     filtrarIncidencias,
+    buscarIncidenciasId,
     cambiarEstado,
-    eliminarIncidencia
+    eliminarIncidencia,
+    obtenerEstadisticas,
+    clasificarIncidencia
 };
