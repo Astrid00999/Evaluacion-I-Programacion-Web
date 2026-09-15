@@ -1,37 +1,49 @@
 const incidenciasD = require('../data/incidenciasData.js');
 
+//Contador para generar ids numericos consecutivos
+let contadorId = 1;
+
 const crearIncidencias = (req, res) => {
-    // Lógica para crear una nueva incidencia
 
     const { empleado, area, descripcion, prioridad } = req.body;
-    //Regla de negocio
-    const estado = "Pendiente";
 
-    if (!empleado || !area || !descripcion || !prioridad ||
-        empleado.trim() === "" || area.trim() === "" ||
-        descripcion.trim() === "" || prioridad.trim() === "") {
+    // Verifica que sea texto con contenido real: rechaza undefined, null, "" y "   "
+    const esTextoValido = (valor) => typeof valor === 'string' && valor.trim() !== '';
+
+    if (!esTextoValido(empleado) || !esTextoValido(area) || !esTextoValido(descripcion) || !esTextoValido(prioridad)) {
         return res.status(400).json({ error: 'Todos los campos son obligatorios y no pueden estar vacíos' });
     }
 
-    switch (prioridad) {
-        case 'Alta':
+    // let porque el switch le asigna el valor ya normalizado
+    let prioridadValidada = '';
+
+    switch (prioridad.trim().toLowerCase()) {
+        case 'alta':
+            prioridadValidada = 'Alta';
             break;
-        case 'Media':
+        case 'media':
+            prioridadValidada = 'Media';
             break;
-        case 'Baja':
+        case 'baja':
+            prioridadValidada = 'Baja';
             break;
         default:
-            return res.status(400).json({ error: 'La prioridad debe ser alta, media o baja' });
+            return res.status(400).json({ error: 'La prioridad debe ser Alta, Media o Baja' });
     }
 
     const nuevaIncidencia = {
-        id: incidenciasD.length > 0 ? Math.max(...incidenciasD.map(i => i.id)) + 1 : 1,
-        empleado, area, descripcion, prioridad, estado
+        id: contadorId,
+        empleado: empleado.trim(),
+        area: area.trim(),
+        descripcion: descripcion.trim(),
+        prioridad: prioridadValidada,
+        estado: 'Pendiente'
     };
 
     incidenciasD.push(nuevaIncidencia);
-    res.status(201).json({ message: 'Incidencia creada exitosamente', incidencia: nuevaIncidencia });
+    contadorId++;
 
+    res.status(201).json({ mensaje: 'Incidencia registrada correctamente' });
 };
 
 const cambiarEstado = (req, res) => {
@@ -79,10 +91,83 @@ const filtrarIncidencias = (req, res) => {
     // Lógica para filtrar paquetes
 };
 
+const buscarIncidenciasId = (req, res) => {
+
+    const id = parseInt(req.params.id);
+    const incidencia = incidenciasD.find(incidencia => incidencia.id === id);
+
+    if (!incidencia) {
+        return res.status(404).json({ error: 'Incidencia no encontrada' })
+    }
+
+    res.json(incidencia);
+};
+
+// 7. Endpoint de Estadísticas -> GET /estadisticas
+
+
+// Cuenta cuántas incidencias tienen un estado determinado.
+// filter() + length evita crear contadores manuales (restricción del enunciado).
+const contarPorEstado = (lista, estado) => {
+    return lista.filter(incidencia => incidencia.estado.trim().toLowerCase() === estado).length;
+};
+
+const obtenerEstadisticas = (req, res) => {
+    const estadisticas = {
+        totalIncidencias: incidenciasD.length,
+        pendientes: contarPorEstado(incidenciasD, 'pendiente'),
+        enProceso: contarPorEstado(incidenciasD, 'en proceso'),
+        resueltas: contarPorEstado(incidenciasD, 'resuelta'),
+        canceladas: contarPorEstado(incidenciasD, 'cancelada')
+    };
+
+    res.json(estadisticas);
+};
+
+
+// 8. Clasificación Automática -> GET /incidencias/:id/clasificacion
+
+
+const clasificarIncidencia = (req, res) => {
+    const id = parseInt(req.params.id);
+    const incidencia = incidenciasD.find(incidencia => incidencia.id === id);
+
+    if (!incidencia) {
+        return res.status(404).json({ mensaje: 'Incidencia no encontrada' });
+    }
+
+    let clasificacion = '';
+
+    switch (incidencia.prioridad.trim().toLowerCase()) {
+        case 'alta':
+            clasificacion = 'Crítica';
+            break;
+        case 'media':
+            clasificacion = 'Importante';
+            break;
+        case 'baja':
+            clasificacion = 'Normal';
+            break;
+        default:
+            clasificacion = 'Sin clasificar';
+            break;
+    }
+
+    res.json({
+        id: incidencia.id,
+        clasificacion: clasificacion
+    });
+};
+
+
+
 module.exports = {
     crearIncidencias,
     obtenerIncidencias,
     filtrarIncidencias,
     cambiarEstado,
-    eliminarIncidencia
+    eliminarIncidencia,
+    buscarIncidenciasId,
+    obtenerEstadisticas,
+    clasificarIncidencia
 };

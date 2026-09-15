@@ -8,12 +8,14 @@ const{
     crearIncidencias, 
     obtenerIncidencias,
     filtrarIncidencias,
-    buscarIncidenciasId
+    buscarIncidenciasId,
+    clasificarIncidencia
 } = require('../controllers/incidenciasController');
 
 router.get('/', obtenerIncidencias);
 router.get('/filtrar', filtrarIncidencias);
 router.get('/:id', buscarIncidenciasId);
+router.get('/:id/clasificacion', clasificarIncidencia);
 router.post('/', crearIncidencias);
 router.put("/:id/estado", incidenciasController.cambiarEstado);
 router.delete("/:id", incidenciasController.eliminarIncidencia);
