@@ -46,6 +46,43 @@ const crearIncidencias = (req, res) => {
     res.status(201).json({ mensaje: 'Incidencia registrada correctamente' });
 };
 
+const cambiarEstado = (req, res) => {
+    id = parseInt(req.params.id);
+    const { estado } = req.body;
+
+    const incidencia = incidenciasD.find(i => i.id === id);
+    if (!incidencia) {
+        return res.status(404).json({ error: 'Incidencia no encontrada' });
+    }
+
+    switch (estado) {
+        case 'Pendiente':
+        case 'En Proceso':
+        case 'Resuelta':
+        case 'Cancelada':
+            incidencia.estado = estado;
+            res.status(200).json({ message: 'Estado de la incidencia actualizado', incidencia });
+            break;
+        default:
+            return res.status(400).json({ error: 'Estado inválido. Debe ser Pendiente, En Proceso, Resuelta o Cancelada' });
+
+    }
+
+};
+
+const eliminarIncidencia = (req, res) => {
+    const id = parseInt(req.params.id);
+    const index = incidenciasD.findIndex(i => i.id === id);
+
+    if (index === -1) {
+        return res.status(404).json({ error: 'Incidencia no encontrada' });
+    }
+
+    incidenciasD.splice(index, 1);
+    return res.status(200).json({ mensaje: 'Incidencia eliminada correctamente' });
+};
+
+
 const obtenerIncidencias = (req, res) => {
     // Lógica para obtener todos los paquetes
 };
@@ -128,6 +165,8 @@ module.exports = {
     crearIncidencias,
     obtenerIncidencias,
     filtrarIncidencias,
+    cambiarEstado,
+    eliminarIncidencia,
     buscarIncidenciasId,
     obtenerEstadisticas,
     clasificarIncidencia

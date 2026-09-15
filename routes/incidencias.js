@@ -17,5 +17,7 @@ router.get('/filtrar', filtrarIncidencias);
 router.get('/:id', buscarIncidenciasId);
 router.get('/:id/clasificacion', clasificarIncidencia);
 router.post('/', crearIncidencias);
+router.put("/:id/estado", incidenciasController.cambiarEstado);
+router.delete("/:id", incidenciasController.eliminarIncidencia);
 
 module.exports = router;
