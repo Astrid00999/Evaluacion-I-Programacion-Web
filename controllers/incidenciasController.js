@@ -1,10 +1,14 @@
-const paquete = require('../data/paquetes.js');
+const incidenciasD = require('../data/incidenciasData.js');
 
 const crearIncidencias = (req, res) => {
     // Lógica para crear un nuevo paquete
 
     const { empleado, area, descripcion, prioridad } = req.body;
-    const estado = "pendiente"; 
+    //Regla de negocio
+    const estado = "pendiente";
+    const nuevaIncidencia = {
+        empleado, area, descripcion, prioridad, estado
+    };
 
     if (!empleado || !area || !descripcion || !prioridad) {
         {
@@ -25,6 +29,9 @@ const crearIncidencias = (req, res) => {
         default:
             return res.status(400).json({ error: 'La prioridad debe ser alta, media o baja' });
     }
+
+    incidenciasD.push(nuevaIncidencia);
+    res.status(201).json({ message: 'Incidencia creada exitosamente', incidencia: nuevaIncidencia });
 
 };
 
