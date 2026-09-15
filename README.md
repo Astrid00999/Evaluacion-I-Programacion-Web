@@ -8,7 +8,7 @@ Desarrollo de una API REST utilizando Express que permita administrar solicitude
 | 1  | Astrid Adamaris Alonzo Gómez | 00091525 |
 | 2  | Yukio Alberto Ogawa Urquilla | 00171625 |
 | 3  | Rubén Eliseo Martínez Pérez  | 00076325 |
-| 4  | Angel                        |          |
+| 4  | Angel Gustavo Monterrosa Cisneros | 00048825 |
 
 
 ## Estructura del repositorio
