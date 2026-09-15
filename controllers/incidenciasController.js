@@ -54,6 +54,17 @@ const filtrarIncidencias = (req, res) => {
     // Lógica para filtrar paquetes
 };
 
+const buscarIncidenciasId = (req, res) => {
+
+    const id = parseInt(req.params.id);
+    const incidencia = incidenciasD.find(incidencia => incidencia.id === id);
+
+    if (!incidencia) {
+        return res.status(404).json({ error: 'Incidencia no encontrada' })
+    }
+
+    res.json(incidencia);
+};
 
 // 7. Endpoint de Estadísticas -> GET /estadisticas
 
@@ -110,6 +121,8 @@ const clasificarIncidencia = (req, res) => {
         clasificacion: clasificacion
     });
 };
+
+
 
 module.exports = {
     crearIncidencias,
