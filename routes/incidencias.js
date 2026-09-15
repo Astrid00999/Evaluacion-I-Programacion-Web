@@ -7,11 +7,13 @@ const router = express.Router();
 const{
     crearIncidencias, 
     obtenerIncidencias,
-    filtrarIncidencias
+    filtrarIncidencias,
+    buscarIncidenciasId
 } = require('../controllers/incidenciasController');
 
-router.get('/:id', obtenerIncidencias);
-router.post('/', crearIncidencias);
+router.get('/', obtenerIncidencias);
 router.get('/filtrar', filtrarIncidencias);
+router.get('/:id', buscarIncidenciasId);
+router.post('/', crearIncidencias);
 
 module.exports = router;
