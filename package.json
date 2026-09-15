@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/Astrid00999/Evaluacion-I-Programacion-Web/issues"
   },
-  "homepage": "https://github.com/Astrid00999/Evaluacion-I-Programacion-Web#readme"
+  "homepage": "https://github.com/Astrid00999/Evaluacion-I-Programacion-Web#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
 }
