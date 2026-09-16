@@ -52,7 +52,7 @@ const crearIncidencias = (req, res) => {
     incidenciasD.push(nuevaIncidencia);
     contadorId++;
 
-    res.status(201).json({ mensaje: 'Incidencia registrada correctamente' , incidenciaAgregada: nuevaIncidencia });
+    return res.status(201).json({ mensaje: 'Incidencia registrada correctamente' , incidenciaAgregada: nuevaIncidencia });
 };
 
 const cambiarEstado = (req, res) => {
@@ -118,7 +118,7 @@ const eliminarIncidencia = (req, res) => {
 
 
 const obtenerIncidencias = (req, res) => {
-    // Lógica para obtener todos los paquetes
+    return res.status(200).json({ mensaje: 'Incidencias obtenidas correctamente', incidencias: incidenciasD });
 };
 
 const buscarIncidenciasId = (req, res) => {
