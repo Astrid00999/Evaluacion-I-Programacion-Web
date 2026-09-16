@@ -54,7 +54,7 @@ const cambiarEstado = (req, res) => {
     const { estado } = req.body;
 
     if(!Number.isInteger(id) || id <= 0) {
-        return res.status(400).json({ error: 'El id debe ser un número positivo'})
+        return res.status(400).json({ error: 'El id debe ser un número entero positivo'})
     }
     if (typeof estado !== 'string' || estado.trim() === '') {
         return res.status(400).json({ error: 'El estado es obligatorio y debe ser un texto válido' });
@@ -95,7 +95,7 @@ const eliminarIncidencia = (req, res) => {
     const id = Number(req.params.id);
 
     if(!Number.isInteger(id) || id <= 0) {
-        return res.status(400).json({ error: 'El id debe ser un número positivo'})
+        return res.status(400).json({ error: 'El id debe ser un número entero positivo'})
     }
 
     const index = incidenciasD.findIndex(i => i.id === id);
@@ -103,9 +103,11 @@ const eliminarIncidencia = (req, res) => {
     if (index === -1) {
         return res.status(404).json({ error: 'Incidencia no encontrada' });
     }
+    
+    const incidenciaEliminada = incidenciasD[index];
 
     incidenciasD.splice(index, 1);
-    return res.status(200).json({ mensaje: 'Incidencia eliminada correctamente' });
+    return res.status(200).json({ mensaje: 'Incidencia eliminada correctamente', incidenciaEliminada: incidenciaEliminada });
 };
 
 
