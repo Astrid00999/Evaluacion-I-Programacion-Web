@@ -11,7 +11,13 @@ const crearIncidencias = (req, res) => {
     const esTextoValido = (valor) => typeof valor === 'string' && valor.trim() !== '';
 
     if (!esTextoValido(empleado) || !esTextoValido(area) || !esTextoValido(descripcion) || !esTextoValido(prioridad)) {
-        return res.status(400).json({ error: 'Todos los campos son obligatorios y no pueden estar vacíos' });
+        return res.status(400).json({ error: 'Todos los campos son obligatorios' });
+    }
+    if (empleado.trim() === '' || area.trim() === '' || descripcion.trim() === '' || prioridad.trim() === '') {
+        return res.status(400).json({ error: 'Ningún campo puede estar vacío' });
+    }
+    if(!/^[a-zA-ZÁÉÍÓÚÑáéíóúñÇç\s]+$/.test(empleado.trim())) {
+        return res.status(400).json({ error: 'El nombre solo debe contener letras y espacios'})
     }
 
     // let porque el switch le asigna el valor ya normalizado
