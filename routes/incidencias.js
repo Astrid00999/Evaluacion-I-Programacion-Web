@@ -7,7 +7,6 @@ const router = express.Router();
 const{
     crearIncidencias, 
     obtenerIncidencias,
-    filtrarIncidencias,
     buscarIncidenciasId,
     clasificarIncidencia
 } = require('../controllers/incidenciasController');

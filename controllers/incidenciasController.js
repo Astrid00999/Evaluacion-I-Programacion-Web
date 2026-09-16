@@ -115,10 +115,6 @@ const obtenerIncidencias = (req, res) => {
     // Lógica para obtener todos los paquetes
 };
 
-const filtrarIncidencias = (req, res) => {
-    // Lógica para filtrar paquetes
-};
-
 const buscarIncidenciasId = (req, res) => {
 
     const id = Number(req.params.id);
@@ -197,7 +193,6 @@ const clasificarIncidencia = (req, res) => {
 module.exports = {
     crearIncidencias,
     obtenerIncidencias,
-    filtrarIncidencias,
     cambiarEstado,
     eliminarIncidencia,
     buscarIncidenciasId,
