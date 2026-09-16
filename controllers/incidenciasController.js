@@ -3,6 +3,12 @@ const incidenciasD = require('../data/incidenciasData.js');
 //Contador para generar ids numericos consecutivos
 let contadorId = 1;
 
+const obtenerIdValido = (req) => {
+    const id = Number(req.params.id);
+
+    return Number.isInteger(id) && id > 0 ? id : null;
+};
+
 const crearIncidencias = (req, res) => {
 
     const { empleado, area, descripcion, prioridad } = req.body;
@@ -50,10 +56,10 @@ const crearIncidencias = (req, res) => {
 };
 
 const cambiarEstado = (req, res) => {
-    const id = Number(req.params.id);
+    const id = obtenerIdValido(req);
     const { estado } = req.body;
 
-    if(!Number.isInteger(id) || id <= 0) {
+    if (id === null) {
         return res.status(400).json({ error: 'El id debe ser un número entero positivo'})
     }
     if (typeof estado !== 'string' || estado.trim() === '') {
@@ -92,9 +98,9 @@ const cambiarEstado = (req, res) => {
 };
 
 const eliminarIncidencia = (req, res) => {
-    const id = Number(req.params.id);
+    const id = obtenerIdValido(req);
 
-    if(!Number.isInteger(id) || id <= 0) {
+    if (id === null) {
         return res.status(400).json({ error: 'El id debe ser un número entero positivo'})
     }
 
@@ -117,9 +123,9 @@ const obtenerIncidencias = (req, res) => {
 
 const buscarIncidenciasId = (req, res) => {
 
-    const id = Number(req.params.id);
+    const id = obtenerIdValido(req);
 
-    if(!Number.isInteger(id) || id <= 0) {
+    if (id === null) {
         return res.status(400).json({ error: 'El id debe ser un número entero positivo'})
     }
 
@@ -137,6 +143,7 @@ const buscarIncidenciasId = (req, res) => {
 
 // Cuenta cuántas incidencias tienen un estado determinado.
 // filter() + length evita crear contadores manuales (restricción del enunciado).
+
 const contarPorEstado = (lista, estado) => {
     return lista.filter(incidencia => incidencia.estado.trim().toLowerCase() === estado).length;
 };
@@ -150,15 +157,19 @@ const obtenerEstadisticas = (req, res) => {
         canceladas: contarPorEstado(incidenciasD, 'cancelada')
     };
 
-    res.json(estadisticas);
+    return res.status(200).json({ mensaje: 'Estadísticas obtenidas correctamente', estadisticas: estadisticas })
 };
-
 
 // 8. Clasificación Automática -> GET /incidencias/:id/clasificacion
 
-
 const clasificarIncidencia = (req, res) => {
-    const id = parseInt(req.params.id);
+    
+    const id = obtenerIdValido(req);
+
+    if (id === null) {
+        return res.status(400).json({ error: 'El id debe ser un número entero positivo'})
+    }
+
     const incidencia = incidenciasD.find(incidencia => incidencia.id === id);
 
     if (!incidencia) {
@@ -182,13 +193,8 @@ const clasificarIncidencia = (req, res) => {
             break;
     }
 
-    res.json({
-        id: incidencia.id,
-        clasificacion: clasificacion
-    });
+    return res.status(200).json({id: incidencia.id, clasificacion: clasificacion});
 };
-
-
 
 module.exports = {
     crearIncidencias,
