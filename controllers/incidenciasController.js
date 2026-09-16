@@ -87,19 +87,6 @@ const obtenerIncidencias = (req, res) => {
     // Lógica para obtener todos los paquetes
 };
 
-const buscarIncidenciasId = (req, res) => {
-
-    const id = parseInt(req.params.id);
-    const incidencia = incidenciasD.find(incidencia => incidencia.id === id);
-
-    if (!incidencia) {
-        return res.status(404).json({ error: 'Incidencia no encontrada' })
-    }
-
-    res.json(incidencia);
-};
-
-
 const filtrarIncidencias = (req, res) => {
     // Lógica para filtrar paquetes
 };
