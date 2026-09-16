@@ -92,9 +92,14 @@ const cambiarEstado = (req, res) => {
 };
 
 const eliminarIncidencia = (req, res) => {
-    const id = parseInt(req.params.id);
-    const index = incidenciasD.findIndex(i => i.id === id);
+    const id = Number(req.params.id);
 
+    if(!Number.isInteger(id) || id <= 0) {
+        return res.status(400).json({ error: 'El id debe ser un número positivo'})
+    }
+
+    const index = incidenciasD.findIndex(i => i.id === id);
+    
     if (index === -1) {
         return res.status(404).json({ error: 'Incidencia no encontrada' });
     }
