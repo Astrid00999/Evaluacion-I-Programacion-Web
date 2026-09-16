@@ -121,14 +121,19 @@ const filtrarIncidencias = (req, res) => {
 
 const buscarIncidenciasId = (req, res) => {
 
-    const id = parseInt(req.params.id);
+    const id = Number(req.params.id);
+
+    if(!Number.isInteger(id) || id <= 0) {
+        return res.status(400).json({ error: 'El id debe ser un número entero positivo'})
+    }
+
     const incidencia = incidenciasD.find(incidencia => incidencia.id === id);
 
     if (!incidencia) {
         return res.status(404).json({ error: 'Incidencia no encontrada' })
     }
 
-    res.json(incidencia);
+    return res.status(200).json({ mensaje: 'Incidencia encontrada exitosamente', incidenciaBuscada: incidencia });
 };
 
 // 7. Endpoint de Estadísticas -> GET /estadisticas
