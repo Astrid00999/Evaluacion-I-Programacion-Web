@@ -13,9 +13,6 @@ const crearIncidencias = (req, res) => {
     if (!esTextoValido(empleado) || !esTextoValido(area) || !esTextoValido(descripcion) || !esTextoValido(prioridad)) {
         return res.status(400).json({ error: 'Todos los campos son obligatorios' });
     }
-    if (empleado.trim() === '' || area.trim() === '' || descripcion.trim() === '' || prioridad.trim() === '') {
-        return res.status(400).json({ error: 'Ningún campo puede estar vacío' });
-    }
     if(!/^[a-zA-ZÁÉÍÓÚÑáéíóúñÇç\s]+$/.test(empleado.trim())) {
         return res.status(400).json({ error: 'El nombre solo debe contener letras y espacios'})
     }
@@ -49,30 +46,48 @@ const crearIncidencias = (req, res) => {
     incidenciasD.push(nuevaIncidencia);
     contadorId++;
 
-    res.status(201).json({ mensaje: 'Incidencia registrada correctamente' });
+    res.status(201).json({ mensaje: 'Incidencia registrada correctamente' , incidenciaAgregada: nuevaIncidencia });
 };
 
 const cambiarEstado = (req, res) => {
-    id = parseInt(req.params.id);
+    const id = Number(req.params.id);
     const { estado } = req.body;
 
+    if(!Number.isInteger(id) || id <= 0) {
+        return res.status(400).json({ error: 'El id debe ser un número positivo'})
+    }
+    if (typeof estado !== 'string' || estado.trim() === '') {
+        return res.status(400).json({ error: 'El estado es obligatorio y debe ser un texto válido' });
+    }
+
     const incidencia = incidenciasD.find(i => i.id === id);
+
     if (!incidencia) {
         return res.status(404).json({ error: 'Incidencia no encontrada' });
     }
 
-    switch (estado) {
-        case 'Pendiente':
-        case 'En Proceso':
-        case 'Resuelta':
-        case 'Cancelada':
-            incidencia.estado = estado;
-            res.status(200).json({ message: 'Estado de la incidencia actualizado', incidencia });
+    let estadoValidado = '';
+    
+    switch (estado.trim().toLowerCase()) {
+        case 'pendiente': 
+            estadoValidado = 'Pendiente'; 
+            break;
+        case 'en proceso':
+            estadoValidado = 'En Proceso'; 
+            break;
+        case 'resuelta': 
+            estadoValidado = 'Resuelta'; 
+            break;
+        case 'cancelada': 
+            estadoValidado = 'Cancelada'; 
             break;
         default:
             return res.status(400).json({ error: 'Estado inválido. Debe ser Pendiente, En Proceso, Resuelta o Cancelada' });
-
     }
+
+    incidencia.estado = estadoValidado;
+
+    return res.status(200).json({ mensaje: 'Estado de la incidencia actualizado correctamente' , incidenciaActualizada: incidencia });
 
 };
 
