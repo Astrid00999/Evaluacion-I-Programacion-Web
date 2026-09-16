@@ -138,7 +138,7 @@ const buscarIncidenciasId = (req, res) => {
     return res.status(200).json({ mensaje: 'Incidencia encontrada exitosamente', incidenciaBuscada: incidencia });
 };
 
-// 7. Endpoint de Estadísticas -> GET /estadisticas
+// Endpoint de Estadísticas -> GET /estadisticas
 
 
 // Cuenta cuántas incidencias tienen un estado determinado.
@@ -160,7 +160,7 @@ const obtenerEstadisticas = (req, res) => {
     return res.status(200).json({ mensaje: 'Estadísticas obtenidas correctamente', estadisticas: estadisticas })
 };
 
-// 8. Clasificación Automática -> GET /incidencias/:id/clasificacion
+// Clasificación Automática -> GET /incidencias/:id/clasificacion
 
 const clasificarIncidencia = (req, res) => {
     

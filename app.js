@@ -6,7 +6,6 @@ const port = 3000;
 
 app.use(express.json());
 app.use('/incidencias', incidencias);
-app.use('/api/incidencias', incidencias);
 app.get('/estadisticas', obtenerEstadisticas);
 
 app.listen(port, () => {
